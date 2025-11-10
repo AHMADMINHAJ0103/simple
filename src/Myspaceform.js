@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { addSubmission } from "./dataStore";
 
 export default function MySpaceForm() {
   const navigate = useNavigate();
@@ -18,51 +19,41 @@ export default function MySpaceForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setMessage("Submitting...");
-
-    try {
-      const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbzJpiD5MHiUQVZGNhNakn9Za-SFZ8jG5-lZdimyGC3J-lYT3ahNIrLJ5KZT7SOKrvRP6w/exec",
-        {
-          method: "POST",
-          body: new URLSearchParams(formData),
-        }
-      );
-
-      const result = await response.json();
-
-      if (result.result === "success") {
-        setMessage("✅ Submitted successfully!");
-        setFormData({
-          name: "",
-          college: "",
-          type: "",
-          title: "",
-          writings: "",
-        });
-      } else {
-        setMessage("❌ Submission failed: " + result.message);
-      }
-    } catch (error) {
-      setMessage("⚠️ Error: " + error.message);
+    if (!formData.name || !formData.college || !formData.type) {
+      setMessage("⚠️ Please fill all required fields!");
+      return;
     }
+
+    addSubmission({
+      id: Date.now(),
+      ...formData,
+    });
+
+    setMessage("✅ Submitted successfully!");
+    setFormData({
+      name: "",
+      college: "",
+      type: "",
+      title: "",
+      writings: "",
+    });
+
+    // Redirect to results page after 1.5s
+    setTimeout(() => navigate("/results"), 1500);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="relative w-full max-w-lg">
-        {/* ❌ Close Button */}
         <button
           onClick={() => navigate(-1)}
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl font-bold transition"
-          aria-label="Close form"
         >
           &times;
         </button>
 
-        {/* Form Container */}
         <form
           onSubmit={handleSubmit}
           className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg w-full space-y-4"
@@ -132,8 +123,8 @@ export default function MySpaceForm() {
           {message && (
             <p
               className={`text-center mt-2 font-medium ${
-                message.includes("Submitting") || message.includes("✅")
-                  ? "text-blue-600"
+                message.includes("✅")
+                  ? "text-green-600"
                   : "text-red-600"
               }`}
             >

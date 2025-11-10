@@ -43,10 +43,10 @@ export default function Navbar() {
               Poems
             </Link>
             <Link
-              to="/contact"
+              to="/login"
               className="text-white hover:text-gray-300 text-sm sm:text-base lg:text-lg transition"
             >
-              Contact
+              Login
             </Link>
             <Link
               to="/myspace"
@@ -97,11 +97,11 @@ export default function Navbar() {
             Poems
           </Link>
           <Link
-            to="/contact"
+            to="/login"
             onClick={handleLinkClick}
             className="text-white hover:text-gray-300 text-base py-2 transition"
           >
-            Contact
+            Login
           </Link>
           <Link
             to="/myspace"
